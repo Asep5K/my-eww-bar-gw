@@ -1,24 +1,28 @@
+@import "./activatelinux/eww.scss";
+@import "./wallpaper/eww.scss";
 /* --- Variabel Global --- */
 $accent: #cba6f7;
+//$bg-card: rgba(255, 255, 255, 0.05);
 $bg-card: rgba(255, 255, 255, 0.05);
 $border-style: 1px solid rgb(203, 166, 247);
+$bg: rgba(173, 173, 173, 0.51);
 
 /* --- Reset & Global Style --- */
 * {
   font-family: "Elymaic", "UbuntuMono Nerd Font";
   background-color: transparent;
   transition: all 0.25s ease;
+  font-size: 20px;
 }
 
 /* --- Bar Utama --- */
 .bar {
-  background-color: rgba(255, 255, 255, 0.6);
+  background-color: $bg;
   color: #333333;
   padding: 0 10px;
   border-radius: 10px;
 }
 
-.ram,
 .menu,
 .menuctl,
 .clock {
@@ -32,13 +36,19 @@ $border-style: 1px solid rgb(203, 166, 247);
   }
 }
 
+.menuctl {
+  color: $accent;
+}
+
 .clock {
   color: black;
 }
 
 /* --- R-Menu & Container --- */
 .rmenu {
-  background-color: rgba(255, 255, 255, 0.6);
+  min-width: 300px;
+  //background-color: rgba(255, 255, 255, 0.6);
+  background-color: $bg;
   margin: 3px;
   padding: 10px;
   border: $border-style;
@@ -46,11 +56,11 @@ $border-style: 1px solid rgb(203, 166, 247);
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
-.sliderctl,
+.slider-container,
 .music-container,
 .profile-container,
 .quick-launch,
-.powerctl {
+.power-container {
   background-color: $bg-card;
   border: $border-style;
   border-radius: 15px;
@@ -59,12 +69,16 @@ $border-style: 1px solid rgb(203, 166, 247);
 }
 
 /* --- Music Player --- */
-.music-title {
+
+.artis,
+.music-timer,
+.main-title {
   color: $accent;
   font-size: 18px;
-  margin-top: 10px;
+  margin: 6px 8px 5px 10px;
   font-weight: 600;
 }
+
 
 .music-slider trough {
   min-height: 4px;
@@ -84,15 +98,15 @@ $border-style: 1px solid rgb(203, 166, 247);
 
 .mico {
   font-size: 20px;
-  background-color: rgba(255, 255, 255, 0.1);
-  border-radius: 50%;
+  //background-color: rgba(255, 255, 255, 0.1);
+  //border-radius: 50%;
   padding: 10px;
   color: #ffffff;
   margin-top: 10px;
 
   &:hover {
     color: $accent;
-    background-color: rgba(255, 255, 255, 0.2);
+    //////background-color: rgba(255, 255, 255, 0.2);
   }
 }
 
@@ -101,9 +115,8 @@ $border-style: 1px solid rgb(203, 166, 247);
   background-size: cover;
   background-position: center;
   border-radius: 1rem;
-  min-height: 4rem;
-  min-width: 4rem;
-  margin: 10px;
+  min-height: 6rem;
+  min-width: 6rem;
 }
 
 /* --- Profile --- */
@@ -139,15 +152,15 @@ $border-style: 1px solid rgb(203, 166, 247);
   border-radius: 10px;
 }
 
-.sliderctl label {
+.slider-container label {
   font-size: 20px;
   color: $accent;
   padding: 0 10px;
 }
 
 /* --- Quick Launch & Power --- */
-.quick-launch button,
-.powerctl eventbox {
+.quick-launch eventbox,
+.power-container eventbox {
   color: $accent;
   padding: 8px 12px;
   transition: 200ms;
@@ -159,52 +172,32 @@ $border-style: 1px solid rgb(203, 166, 247);
   }
 }
 
-.powerctl *:hover label {
+.power-container *:hover label {
   color: white;
   // background-color: rgba(255, 255, 255, 0.1);
 }
 
 .ram {
-  background-color: rgba(122, 121, 121, 0.572);
-  border: 1px solid rgb(203, 166, 247);
-  border-radius: 12px;
-  color: #cba6f7;
-  font-weight: bold;
+  color: $accent;
+  padding-right: 10px;
 }
 
-.ram-icon {
-  font-size: 20px;
-  margin-right: 5px;
+.telegram {
+  color: rgb(36, 161, 222);
 }
 
-.ram-usage {
-  font-size: 16px;
-  letter-spacing: 1px;
+.spotify {
+  color: rgb(30, 215, 96);
 }
 
-.cpu-container {
-  background-color: rgba(255, 255, 255, 0.05);
-  border: 1px solid #cba6f7;
-  padding: 1px;
+.discord {
+  color: rgb(88, 101, 242);
 }
 
-.graph-display {
-  color: #cba6f7;
+.filemanager {
+  color: rgb(255, 140, 0);
 }
 
-.main-temp {
-  margin: 5px;
-  padding: 20px;
-}
-
-.main-temp-text {
-  font-size: 32px;
-  color: white;
-  font-weight: bold;
-}
-
-.minicores {
-  margin-top: 5px;
-  color: #cdd6f4;
-  font-size: 14px;
+.browser {
+  color: rgb(255, 113, 57);
 }

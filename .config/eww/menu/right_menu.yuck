@@ -1,88 +1,38 @@
+(include "./menu/sys.yuck")
 (defvar open_rmenu false)
-(defpoll current_brightness :interval "10s" "brightnessctl -m | awk -F, '{gsub(/%/, \"\", $4); print $4}'")
-(defpoll current_volume :interval "10s" "wpctl get-volume @DEFAULT_AUDIO_SINK@ | awk '{print $2 * 100}'")
+(defpoll current_brightness :interval "1s" "brightnessctl -m | awk -F, '{gsub(/%/, \"\", $4); print $4}'")
+(defpoll current_volume :interval "1s" "wpctl get-volume @DEFAULT_AUDIO_SINK@ | awk '{print $2 * 100}'")
 (defvar username "foobar")
-; (include "./menu/music.yuck")
-; (include "./menu/apps.yuck")
 
 (deflisten musica :initial "{}" "./scripts/music.sh a")
 (deflisten musicb :initial "{}" "./scripts/music.sh b")
-
- (defwidget cpu_panel []
-   (box :class "cpu-container"
-     :orientation "v"
-     :space-evenly false
-     (box :orientation "h"
-       :class "cpu-header"
-       :space-evenly false
-       (label :text "Core Temperature" :style "color:#cdd6f4;font-size:20px;")
-     )
-     (box :class "graph-container"
-       :orientation "v"
-       :space-evenly false
-       (overlay
-         (graph :thickness 2
-           :dynamic true
-           :height "100"
-           :width "350"
-           :class "graph-display"
-           :time-range "300s"
-           :min 0
-           :max 101
-           :value {EWW_TEMPS.CORETEMP_PACKAGE_ID_0}
-         )
-         (box :class "main-temp"
-           :halign "start"
-           :valign "end"
-           (label :class "main-temp-text" :text "${EWW_TEMPS.CORETEMP_PACKAGE_ID_0} °C")
-         )
-       )
-     )
-     (box :class "minicore-container"
-       :orientation "v"
-       :space-evenly false
-       (box :class "minicores"
-         (label :class "C0" :text "Core 0: ${EWW_TEMPS.CORETEMP_CORE_0} °C")
-         (label :class "C1" :text "Core 1: ${EWW_TEMPS.CORETEMP_CORE_1} °C")
-       )
-       (box :class "minicores"
-         (label :class "C2" :text "Core 2: ${EWW_TEMPS.CORETEMP_CORE_2} °C")
-         (label :class "C3" :text "Core 3: ${EWW_TEMPS.CORETEMP_CORE_3} °C")
-       )
-     )
-
-   )
- )
 
 (defwidget music_player []
   (box :class "music-container"
     :orientation "v"
     :space-evenly false
-    :spacing 0 ;; <--- Kunci biar gak ada jarak otomatis
-
-    (box :class "music-thumbnail"
-      :width 200 :height 150
-      :style "background-image: url('${musica.thumbnail}');"
-    )
-
-    (label :class "music-title"
-      :text {musica.artist}
-      :tooltip {musica.title}
-    )
-
-    ;; Slider & Timer (Kasih margin di CSS daripada spacing box)
-    (box :class "music-slider-container"
-      :orientation "v" ;; Slider diatas, timer dibawah
+    
+    (box :class "music-title"
+      :orientation "h"
       :space-evenly false
-      (scale :class "music-slider"
-        :min 0 :max {musica.length} :value {musicb.position}
-        :onchange "playerctl position {}"
+      
+      (box :class "music-thumbnail"
+        :style "background-image: url('${musica.thumbnail}');"
       )
-      (label :class "music-timer" :halign "center" :text {musicb.positionStr})
+      (box :class "music-desc"
+        :orientation "v"
+        :space-evenly false
+        (label :class "main-title" :halign "start" :limit-width 20 :text {musica.title})
+        (label :class "artis" :halign "start" :limit-width 20 :text {musica.artist})
+        (label :class "music-timer" :halign "start" :text {musicb.positionStr})
+      )
     )
-
+    (scale :class "music-slider"
+      :min 0 :max {musica.length} :value {musicb.position}
+      :onchange "playerctl position {}"
+    )
     (box :class "music-button"
-      :orientation "h" :space-evenly false :halign "center" :spacing 20 ;; Kecilin spacing-nya
+      :orientation "h" :space-evenly false :halign "center" :spacing 20
       (eventbox :class "mico" :onclick "playerctl previous" "󰒮")
       (eventbox :class "mico" :onclick "playerctl play-pause" {musica.status == "Playing" ? "󰓛" : "󰐊"})
       (eventbox :class "mico" :onclick "playerctl next" "󰒭")
@@ -93,19 +43,49 @@
 (defwidget applications []
   (box :class "quick-launch"
     :orientation "h"
-    :space-evenly false
+    :space-evenly true
     :spacing 10
-    (button :onclick "vivaldi" "󰖟 ")
-    (button :onclick "foot &" " ")
-    (button :onclick "foot yazi &" "󰉋 ")
-    (button :onclick "discord &" "󰙯 ")
-    (button :onclick "spotify &" " ")
-    (button :onclick "Telegram &" " ")
+    (eventbox :cursor "pointer"
+      :class "browser"
+      :onclick "vivaldi"
+      :tooltip "Browser"
+      (label :text "󰈹")
+      )(eventbox :cursor "pointer"
+      :class "terminal"
+      :onclick "foot -D ~ &"
+      :tooltip "Terminal"
+      (label :text "")
+    )
+    (eventbox :cursor "pointer"
+      :class "filemanager"
+      :tooltip "yazi"
+      :onclick "foot -D ~ yazi &"
+      (label :text "󰇥")
+    )
+    (eventbox :cursor "pointer"
+      :class "discord"
+      :onclick "discord &"
+      :tooltip "Discord"
+      (label :text "󰙯")
+    )
+    (eventbox :cursor "pointer"
+      :class "spotify"
+      :tooltip "Spotify"
+      :onclick "spotify &"
+      (label :text "")
+    )
+    (eventbox :cursor "pointer"
+      :class "telegram"
+      :tooltip "Telegram"
+      :onclick "Telegram &"
+      (label :text "")
+    )
+    
   )
 )
 
 (defwidget power_buttons []
-  (box :class "powerctl"
+  (box :class "power-container"
     :orientation "h"
     :space-evenly true
     (eventbox :cursor "pointer"
@@ -136,73 +116,59 @@
 )
 
 (defwidget slider []
-  (box :class "sliderctl"
+  (box :class "slider-container"
     :orientation "v"
     :spacing 10
     :halign "center"
     :valign "center"
     (box :class "volume-slider"
+      :orientation "h"
       :space-evenly false
       :halign "center"
-      (label :text "󰕾")
+      :spacing 5
+      (label :halign "start" :text "󰕾")
       (scale :class "volume"
         :value {current_volume}
         :min 0
         :max 101
         :onchange "wpctl set-volume @DEFAULT_AUDIO_SINK@ {}%"
         :active true
+        )               (box :width 60 :halign "end"
+        (label :text "${current_volume}%" :halign "end")
       )
-      ; (label :text "${current_volume}%")
     )
     (box :class "brightness-slider"
-      :halign "center"
+      :halign "end"
       :valign "center"
+      :orientation "h"
       :space-evenly false
-      (box :width 30 :hexpand true (label :text "󰃠")
-      )
+      :spacing 5
+      (label :halign "start" :text "󰃠")
       (scale :class "brightness"
         :value {current_brightness}
-        :min 20
+        :min 0
         :max 101
         :onchange "brightnessctl set {}%"
+        ;;:tooltip "Brightness: ${current_brightness}%"
         :active true
       )
-      ; (label :text "${current_brightness}%" :space-evenly false)
-    )
+      (box :width 60 :halign "end"
+        (label :text "${current_brightness}%" :halign "end")
+      )
+)
   )
 )
-; (box :class "profile-container"
-  ;   :space-evenly false
-  ;   :orientation "v"
-  ;   (box :class "profile"
-    ;     :space-evenly false
-    ;     :halign "center"
-  ;   )
-  ;   (label :class "username"
-  ;   :text {username})
-; )
 (defwidget rmenu []
   (box
     :class "rmenu"
     :orientation "v"
     :space-evenly false
     :spacing 0
-    ; :width 300
-    ; :height 700
-    (music_player)
-    ;(box :vexpand true);;placeholder
-    ;(box :class "current-wallpaper"
-     ; :width 10 :height 120
-      ;:style "background-image: url('../hypr/wallpaper/1.jpg')"
-    ;)
+    (box :vexpand true);;placeholder
     (slider)
+    (music_player)
     (applications)
     (power_buttons)
-    ;(cpu_panel)
-    (box :class "main-temp"
-           (label :class "main-temp-text" :text "${EWW_TEMPS.CORETEMP_PACKAGE_ID_0} °C")
-         )
-
   )
 )
 
@@ -210,11 +176,12 @@
   :monitor 0
   :stacking "overlay"
   :geometry (geometry :anchor "bottom right"
-    :height "95%"
-    :width "30%"
+    ;:height "96.5%"
+    :height "70%"
+    :width "10%"
   )
   (box :space-evenly false
-    :halign "end"
+    ;:halign "end"
     (revealer :transition "slideleft"
       :reveal {open_rmenu}
       :duration "350ms"
@@ -230,7 +197,7 @@
     :tooltip "etc..."
     (eventbox ;:onhover "./scripts/right_menu.sh"
       :onclick "./scripts/right_menu.sh"
-      (label :text " ")
+      (label :text " ")
     )
   )
 )

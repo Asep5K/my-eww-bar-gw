@@ -1,98 +1,102 @@
-(include "./var.yuck")
-(include "./menu/right_menu.yuck")
+(defvar calrev false)
+  (defpoll get_time :interval "60s" "date +%H:%M")
+  (defpoll get_date :interval "1h" "date +%d.%m.%Y, %A")
+  (include "./menu/right_menu.yuck")
+  (include "./activatelinux/activatelinux.yuck")
+(include "./wallpaper/eww.yuck")
 
-(defwidget bar []
-  (box :class "bar"
+  (defwidget bar []
+   (box :class "bar"
     :orientation "h"
 
     ;; box kanan
     (box :halign "start"
-      :valign "center"
-      :spacing 10
-      :hexpand true
-      :space-evenly false
-      (menu)
+     :valign "center"
+     :spacing 10
+     :hexpand true
+     :space-evenly false
+     (menu)
     )
 
     ;; box tengah
     (box :halign "center"
-      :valign "center"
-      :spacing 10
-      :hexpand true
-      :orientation "h"
-      (time :time get_time)
+     :valign "center"
+     :spacing 10
+     :hexpand true
+     :orientation "h"
+     (time :time get_time)
     )
     ;; box kanan
-    (box :halign "end"
-      :valign "center"
-      :hexpand true
-      :space-evenly false
-      :spacing 10
-      (ram)
-      (menuctl)
-    )
-  )
-)
+   (box :halign "end"
+    :valign "center"
+    :hexpand true
+    :space-evenly false
+    :spacing 10
+    (ram)
+    (menuctl)
+   )
+   )
+   )
 
-;; jam
-(defwidget time [time]
-  (box :class "clock"
-    (eventbox :onclick "./scripts/calendar.sh"
+   ;; jam
+   (defwidget time [time]
+    (box :class "clock"
+     (eventbox :onclick "./scripts/calendar.sh"
       :cursor "pointer"
       :width 120
       :height 25
       (label :text "${time}")
+     )
     )
-  )
-)
+   )
 
-;; ram percentage
-; (defwidget ram []
-  ;   (box :class "ram"
-    ;     :orientation "h"
-    ;     :space-evenly false
-    ;     :spacing 5
-    ;     (label :text "󰍛")
-    ;     (scale :min 0 :max 100
-      ;       :value {EWW_RAM.used_mem_perc}
-      ;       :active false
-    ;     :class "ram-bar")
-    ;     (label :text "${round(EWW_RAM.used_mem_perc,0)}%")
-  ;   )
-; )
-(defwidget ram[]
-  (box :class "ram"
-    :orientation "h"
-    :spacing 5
-    (label :text "󰍛" :class "ram-icon")
-    (label :text "${round(EWW_RAM.used_mem_perc,0)}%" :class "ram-usage")
-  )
-)
-;; rofi menu
-(defwidget menu []
-  (box :class "menu"
-    :orientation "h"
-    :space-evenly true
-    (eventbox :class "menu"
+   ;; ram percentage
+   ; (defwidget ram []
+       ;   (box :class "ram"
+         ;     :orientation "h"
+         ;     :space-evenly false
+         ;     :spacing 5
+         ;     (label :text "󰍛")
+         ;     (scale :min 0 :max 100
+           ;       :value {EWW_RAM.used_mem_perc}
+           ;       :active false
+           ;     :class "ram-bar")
+         ;     (label :text "${round(EWW_RAM.used_mem_perc,0)}%")
+         ;   )
+       ; )
+   (defwidget ram[]
+    (box :class "ram"
+     :orientation "h"
+     :spacing 5
+     (label :text "󰍛" :class "ram-icon")
+     (label :text "${round(EWW_RAM.used_mem_perc,0)}%" :class "ram-usage")
+    )
+   )
+   ;; rofi menu
+   (defwidget menu []
+    (box :class "menu"
+     :orientation "h"
+     :space-evenly true
+     (eventbox :class "menu"
       :onclick "rofi -show drun &"
       :cursor "pointer"
       :tooltip "dmenu"
       (label :text "󰣇 ")
+     )
     )
-  )
-)
+   )
 
-;; bar utama
-(defwindow bar_widget
-  :monitor 0
-  :stacking "fg"
-  :geometry (geometry
-    :anchor "bottom center"
-    :width "99.5%"
-    :height "3.80%"
-  )
-  :exclusive true
-  (bar)
-)
+    ;; bar utama
+    (defwindow bar_widget
+     :monitor 0
+     :stacking "fg"
+     :geometry (geometry
+       :anchor "bottom center"
+       :width "99.5%"
+       :height "3.80%"
+       )
+     :exclusive true
+     (bar)
+    )
 
-;; vim: ft=yuck:nowrap
+     ;; vim: ft=yuck:nowrap
