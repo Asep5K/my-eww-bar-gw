@@ -1,0 +1,171 @@
+(defvar is_nexus_open false)
+(defpoll current_volume :interval "1s" :initial "0" :run-while is_nexus_open `wpctl get-volume @DEFAULT_AUDIO_SINK@ | awk '{print $2 * 100}'`)
+(defpoll current_brightness :interval "1s" :initial "0" :run-while is_nexus_open `brightnessctl -m | awk -F, '{gsub(/%/, \"\", $4); print $4}'`)
+(defpoll daytime :interval "1s" :run-while is_nexus_open `date '+%H:%M:%S %d.%m.%Y, %A'`)
+(deflisten musica :initial "{}" :run-while is_nexus_open `./scripts/music.sh a`)
+(deflisten musicb :initial "{}" :run-while is_nexus_open `./scripts/music.sh b`)
+
+(defwidget btn [icon ?class tooltip onclick]
+           (eventbox :cursor "pointer"
+                     :tooltip tooltip
+                     :onclick onclick
+                     (label :class {class?:"kanjuts"} :text icon)
+                     )
+           )
+
+(defwidget clock []
+           (box :class "daytime-container"
+                :orientation "h"
+                :space-evenly true
+                :spacing 10
+                (label :text daytime)
+                ))
+
+(defwidget music_player []
+           (box :class "music-container"
+                :orientation "v"
+                :space-evenly false
+
+                (box :class "music-title"
+                     :orientation "h"
+                     :space-evenly false
+
+                     (box :class "music-thumbnail"
+                          :style "background-image: url('${musica.thumbnail}');"
+                          )
+                     (box :class "music-desc"
+                          :orientation "v"
+                          :space-evenly false
+                          (label :class "main-title" :halign "start" :limit-width 20 :text {musica.title})
+                          (label :class "artis" :halign "start" :limit-width 20 :text {musica.artist})
+                          (label :class "music-timer" :halign "start" :text {musicb.positionStr})
+                          )
+                     )
+                (eventbox :cursor "pointer" (scale :class "music-slider"
+                                                   :min 0 :max {musica.length} :value {musicb.position}
+                                                   :onchange "playerctl position {}"
+                                                   ))
+                (box :class "music-button"
+                     :orientation "h" :space-evenly false :halign "center" :spacing 70
+                     (btn :class "mico" :onclick "playerctl previous" :tooltip "previous" :icon "󰒮")
+                     (btn :icon "${musica.status == "Playing" ? "󰓛" : "󰐊"}":class "mico" :onclick "playerctl play-pause" :tooltip "play/pause")
+                     (btn :icon "󰒭" :class "mico" :tooltip "next" :onclick "playerctl next")
+                     )
+                )
+           )
+
+(defwidget applications []
+           (box :class "quick-launch"
+                :orientation "h"
+                :space-evenly true
+                ;:spacing 10
+                (btn :icon "󰈹" :class "browser" :tooltip "vivaldi" :onclick "vivaldi")
+                (btn :icon "" :class "terminal" :tooltip "foot" :onclick "foot -D ~ &")
+                (btn :icon "󰇥" :class "filemanager" :tooltip "yazi" :onclick "foot -D ~ yazi &")
+                (btn :icon "󰙯" :class "discord" :tooltip "Discord" :onclick "discord &")
+                (btn :icon "" :class "spotify" :tooltip "Spotify" :onclick "spotify &")
+                (btn :icon "" :class "telegram" :tooltip "Telegram" :onclick "Telegram &")
+
+                )
+           )
+
+
+
+(defwidget power_buttons []
+           (box :class "power-container"
+                :orientation "h"
+                :space-evenly true
+                (btn :icon "⏻" :tooltip "Shutdown" :onclick "systemctl poweroff")
+                (btn :icon "" :tooltip "Reboot" :onclick "systemctl reboot")
+                (btn :icon "" :tooltip "Lock" :onclick "loginctl lock-session")
+                (btn :icon "󰒲" :tooltip "Sleep" :onclick "systemctl suspend")
+                )
+           )
+
+(defwidget slider []
+           (eventbox :cursor "pointer"
+                     (box :class "slider-container"
+                          :orientation "v"
+                          :spacing 10
+                          :halign "center"
+                          :valign "center"
+                          (box :class "volume-slider"
+                               :orientation "h"
+                               :space-evenly false
+                               :halign "center"
+                               :spacing 5
+                               (label :halign "start" :text "󰕾")
+                               (scale :class "volume"
+                                      :value {current_volume}
+                                      :min 0
+                                      :max 101
+                                      :onchange "wpctl set-volume @DEFAULT_AUDIO_SINK@ {}%"
+                                      :active true
+                                      )               (box :width 60 :halign "end"
+                                      (label :text "${current_volume}%" :halign "end")
+                                      )
+                               )
+                          (box :class "brightness-slider"
+                               :halign "end"
+                               :valign "center"
+                               :orientation "h"
+                               :space-evenly false
+                               :spacing 5
+                               (label :halign "start" :text "󰃠")
+                               (scale :class "brightness"
+                                      :value {current_brightness}
+                                      :min 0
+                                      :max 101
+                                      :onchange "brightnessctl set {}%"
+                                      :active true
+                                      )
+                               (box :width 60 :halign "end"
+                                    (label :text "${current_brightness}%" :halign "end")
+                                    )
+                               )
+                          )
+                     )
+           )
+
+
+(defwindow nexus_win
+           :monitor 0
+           :namespace "nexus-win"
+           :stacking "overlay"
+           :geometry (geometry :anchor "bottom right"
+                               ;:height "96.5%"
+                               :height "70%"
+                               :width "10%"
+                               )
+           (box :space-evenly false
+                :halign "end"
+                (revealer :transition "slideleft"
+                          :reveal is_nexus_open
+                          :duration "350ms"
+                          (eventbox ;:onhoverlost "./scripts/nexus.sh"
+                            ;(rmenu)
+                            (box :class "nexus-container"
+                                 :orientation "v"
+                                 :space-evenly false
+                                 (clock)
+                                 (slider)
+                                 (music_player)
+                                 (applications)
+                                 (power_buttons)
+                                 )
+                            )
+                          )
+                )
+           )
+
+(defwidget menuctl []
+           (box :class "menuctl"
+                :tooltip "etc..."
+                (eventbox 
+                  :onclick "./scripts/nexus.sh"
+                  (label :text " ")
+                  )
+                )
+           )
+
+; vim: ft=lisp:nowrap

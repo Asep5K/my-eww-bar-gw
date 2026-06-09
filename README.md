@@ -15,6 +15,4 @@ eww open bar_widget
 ```
 
 ## KISS (Keep It Simple, Stupid)
-<img width="1366" height="768" alt="image" src="https://github.com/user-attachments/assets/e8c150f4-1bf5-4734-b4e7-6b2c659fa5c1" />
-
-<!-- <img width="1366" height="768" alt="image" src="https://github.com/user-attachments/assets/f98b3c32-9aa4-4f08-bcb2-bf87af1563f8" /> -->
+![Preview](./preview.png)

@@ -1,203 +1,47 @@
-@import "./activatelinux/eww.scss";
-@import "./wallpaper/eww.scss";
-/* --- Variabel Global --- */
-$accent: #cba6f7;
-//$bg-card: rgba(255, 255, 255, 0.05);
-$bg-card: rgba(255, 255, 255, 0.05);
-$border-style: 1px solid rgb(203, 166, 247);
-$bg: rgba(173, 173, 173, 0.51);
+$base: #eff1f5;
+$text: #4c4f69;
+$accent: #8839ef;
+$bg-menu: rgba(239, 241, 245, 0.7);
 
-/* --- Reset & Global Style --- */
+@import "./nexus/eww.scss";
+
+
 * {
-  font-family: "Elymaic", "UbuntuMono Nerd Font";
-  background-color: transparent;
-  transition: all 0.25s ease;
-  font-size: 20px;
+    font-family: "UbuntuMono Nerd Font", sans-serif;
+    background-color: transparent;
+    color: $text;
+    transition: all 0.3s ease;
+    font-size: 18px;
 }
 
-/* --- Bar Utama --- */
+
 .bar {
-  background-color: $bg;
-  color: #333333;
-  padding: 0 10px;
-  border-radius: 10px;
-}
-
-.menu,
-.menuctl,
-.clock {
-  font-size: 20px;
-  border: solid;
-  color: rgb(16, 109, 232);
-  padding: 0 5px;
-
-  &:hover {
-    color: gray;
-  }
-}
-
-.menuctl {
-  color: $accent;
-}
-
-.clock {
-  color: black;
-}
-
-/* --- R-Menu & Container --- */
-.rmenu {
-  min-width: 300px;
-  //background-color: rgba(255, 255, 255, 0.6);
-  background-color: $bg;
-  margin: 3px;
-  padding: 10px;
-  border: $border-style;
-  border-radius: 10px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-}
-
-.slider-container,
-.music-container,
-.profile-container,
-.quick-launch,
-.power-container {
-  background-color: $bg-card;
-  border: $border-style;
-  border-radius: 15px;
-  margin: 10px;
-  padding: 15px;
-}
-
-/* --- Music Player --- */
-
-.artis,
-.music-timer,
-.main-title {
-  color: $accent;
-  font-size: 18px;
-  margin: 6px 8px 5px 10px;
-  font-weight: 600;
+    background-color: rgba(255, 255, 255, 0.6);
+    padding: 0 15px;
+    border-radius: 12px;
 }
 
 
-.music-slider trough {
-  min-height: 4px;
-  background-color: rgba(255, 255, 255, 0.2);
+.menu {
+    color: blue;
+    padding: 0 8px;
+    border: none;
 }
 
-.music-slider highlight {
-  background-color: $accent;
-}
-
-.music-slider slider {
-  background-color: white;
-  min-width: 10px;
-  min-height: 10px;
-  border-radius: 50%;
-}
-
-.mico {
-  font-size: 20px;
-  //background-color: rgba(255, 255, 255, 0.1);
-  //border-radius: 50%;
-  padding: 10px;
-  color: #ffffff;
-  margin-top: 10px;
-
-  &:hover {
-    color: $accent;
-    //////background-color: rgba(255, 255, 255, 0.2);
-  }
-}
-
-.music-thumbnail {
-  background-repeat: no-repeat;
-  background-size: cover;
-  background-position: center;
-  border-radius: 1rem;
-  min-height: 6rem;
-  min-width: 6rem;
-}
-
-/* --- Profile --- */
-.profile {
-  box-shadow: 0 2px 3px 2px rgba(6, 6, 11, 0.9);
-  background-image: url('../../.face');
-  background-size: 70px;
-  background-position: center;
-  background-repeat: no-repeat;
-  min-height: 70px;
-  min-width: 70px;
-  border-radius: 100%;
-}
-
-.username {
-  font-size: 28px;
-  color: $accent;
-  padding: 10px;
-}
-
-/* --- Sliders & Controls --- */
-.brightness-slider trough,
-.volume-slider trough {
-  min-height: 6px;
-  min-width: 200px;
-  background-color: rgba(255, 255, 255, 0.1);
-  border-radius: 10px;
-}
-
-.brightness-slider highlight,
-.volume-slider highlight {
-  background-color: $accent;
-  border-radius: 10px;
-}
-
-.slider-container label {
-  font-size: 20px;
-  color: $accent;
-  padding: 0 10px;
-}
-
-/* --- Quick Launch & Power --- */
-.quick-launch eventbox,
-.power-container eventbox {
-  color: $accent;
-  padding: 8px 12px;
-  transition: 200ms;
-  border-radius: 8px;
-
-  &:hover {
-    color: white;
-    background-color: rgba(203, 166, 247, 0.3);
-  }
-}
-
-.power-container *:hover label {
-  color: white;
-  // background-color: rgba(255, 255, 255, 0.1);
-}
 
 .ram {
-  color: $accent;
-  padding-right: 10px;
+    padding-right: 12px;
+    font-weight: bold;
 }
 
-.telegram {
-  color: rgb(36, 161, 222);
+.work label {
+    font-size: 15px;
+    color: $text;
+    margin: 2px 4px;
 }
 
-.spotify {
-  color: rgb(30, 215, 96);
-}
-
-.discord {
-  color: rgb(88, 101, 242);
-}
-
-.filemanager {
-  color: rgb(255, 140, 0);
-}
-
-.browser {
-  color: rgb(255, 113, 57);
+.workspace-container {
+    background-color: $bg-menu;
+    border-radius: 12px;
+    border: 1px solid $accent;
 }
