@@ -1,0 +1,74 @@
+(include "nexus/eww.yuck")
+(include "workspace/eww.yuck")
+
+(defwidget bar []
+           (box :class "bar"
+                :orientation "h"
+                (box :halign "start" ;; box kiri
+                     :valign "center"
+                     :spacing 10
+                     :hexpand true
+                     :space-evenly false
+                     (menu))
+                (box :halign "center" ;; box tengah
+                     :valign "center"
+                     :spacing 10
+                     :hexpand true
+                     :orientation "h"
+                     (workspaces))
+                (box :halign "end" ;; box kanan
+                     :valign "center"
+                     :hexpand true
+                     :space-evenly false
+                     :spacing 10
+                     (tray)
+                     ;(vol)
+                     (temp)
+                     (nexus)
+                     )
+                )
+           )
+
+(defwidget tray []
+           (systray 
+             :spacing 10
+             :orientation "h"
+             :space-evenly false
+             :icon-size 20
+             :prepend-new true
+             )
+           )
+
+(defwidget temp [] ;ek
+           (box :class "temp"
+                :orientation "h"
+                (label :text "" :class "temp-icon")
+                (label :text "${EWW_TEMPS.CORETEMP_PACKAGE_ID_0}󰔄"
+                       :class "tempr ${EWW_TEMPS.CORETEMP_PACKAGE_ID_0 >= 70  ? "panas-goblok" : "adem-ayem"}" 
+                       )
+                )
+           )
+
+;; rofi menu
+(defwidget menu []
+           (eventbox :class "arch-btw"
+                     :onclick "rofi -show drun &"
+                     :cursor "pointer"
+                     :tooltip "dmenu"
+                     (label :text "󰣇 " )
+                     )
+           )
+
+(defwindow bar
+           :monitor 0
+           :namespace "bottom-bar"
+           :stacking "fg"
+           :geometry (geometry :anchor "bottom center"
+                               :width "99.5%"
+                               :height "3.80%"
+                               )
+           :exclusive true
+           (bar)
+           )
+
+;; vim: ft=lisp:nowrap

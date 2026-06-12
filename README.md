@@ -31,7 +31,7 @@ end)
 
 ## RUN
 ```bash
-eww open-many bar_widget workspace_hover
+eww open-many bar workspace_hover
 ```
 
 ## KISS (Keep It Simple, Stupid)

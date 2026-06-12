@@ -1,10 +1,10 @@
-(defvar current_nexus 0)
-(defvar is_nexus_open false)
+(include "sysinfo/eww.yuck")
+(defvar nexus_rev false)
 (defpoll current_volume :interval "1s" :initial "0" :run-while is_nexus_open `wpctl get-volume @DEFAULT_AUDIO_SINK@ | awk '{print $2 * 100}'`)
 (defpoll current_brightness :interval "1s" :initial "0" :run-while is_nexus_open `brightnessctl -m | awk -F, '{gsub(/%/, \"\", $4); print $4}'`)
 (defpoll daytime :interval "1s" :run-while is_nexus_open `date '+%H:%M:%S %d.%m.%Y, %A'`)
-(deflisten musica :initial "{}" :run-while is_nexus_open `./scripts/music.sh a`)
-(deflisten musicb :initial "{}" :run-while is_nexus_open `./scripts/music.sh b`)
+(deflisten musica :initial "{}" :run-while is_nexus_open `nexus/scripts/music.sh a`)
+(deflisten musicb :initial "{}" :run-while is_nexus_open `nexus/scripts/music.sh b`)
 
 (defwidget btn [icon ?class tooltip onclick]
            (eventbox :class "btn-container"
@@ -15,38 +15,42 @@
                      )
            )
 
+
+(defwidget decor []
+        (box :orientation "h" 
+             :class "decoration" 
+             :halign "end"
+             (btn :icon "󱄊" :class "close-btn" :tooltip "close" :onclick "${EWW_CMD} update nexus_rev=false")
+           ))
+
 (defwidget clock []
            (box :class "daytime-container"
                 :orientation "h"
                 :space-evenly true
-                :spacing 10
                 (label :text daytime)
-                ))
+                )
+           )
 
 (defwidget music_player []
            (box :class "music-container"
                 :orientation "v"
                 :space-evenly false
-
+                :spacing 2
                 (box :class "music-title"
                      :orientation "h"
                      :space-evenly false
-
+                     :spacing 3
                      (box :class "music-thumbnail"
-                          :style "background-image: url('${musica.thumbnail}');"
-                          )
+                          :style "background-image: url('${musica.thumbnail}');")
                      (box :class "music-desc"
                           :orientation "v"
                           :space-evenly false
                           (label :class "main-title" :halign "start" :limit-width 20 :text {musica.title})
                           (label :class "artis" :halign "start" :limit-width 20 :text {musica.artist})
-                          (label :class "music-timer" :halign "start" :text {musicb.positionStr})
-                          )
-                     )
+                          (label :class "music-timer" :halign "start" :text {musicb.positionStr})))
                 (eventbox :cursor "pointer" (scale :class "music-slider"
                                                    :min 0 :max {musica.length} :value {musicb.position}
-                                                   :onchange "playerctl position {}"
-                                                   ))
+                                                   :onchange "playerctl position {}"))
                 (box :class "music-button"
                      :orientation "h" :space-evenly false :halign "center" :spacing 70
                      (btn :class "mico" :onclick "playerctl previous" :tooltip "previous" :icon "󰒮")
@@ -60,17 +64,15 @@
            (box :class "quick-launch"
                 :orientation "h"
                 :space-evenly true
-                ;:spacing 10
+                :spacing 5
                 (btn :icon "󰈹" :class "browser" :tooltip "vivaldi" :onclick "vivaldi")
                 (btn :icon "" :class "terminal" :tooltip "foot" :onclick "foot -D ~ &")
                 (btn :icon "󰇥" :class "filemanager" :tooltip "yazi" :onclick "foot -D ~ yazi &")
                 (btn :icon "󰙯" :class "discord" :tooltip "Discord" :onclick "discord &")
                 (btn :icon "" :class "spotify" :tooltip "Spotify" :onclick "spotify &")
                 (btn :icon "" :class "telegram" :tooltip "Telegram" :onclick "Telegram &")
-
                 )
            )
-
 
 
 (defwidget power_buttons []
@@ -81,6 +83,7 @@
                 (btn :icon "" :tooltip "Reboot" :onclick "systemctl reboot")
                 (btn :icon "" :tooltip "Lock" :onclick "loginctl lock-session")
                 (btn :icon "󰒲" :tooltip "Sleep" :onclick "systemctl suspend")
+                (btn :icon "󰿅" :tooltip "Exit Hyperland.replace('e','')" :onclick "hyprctl dispatch 'hl.dsp.exit()'")
                 )
            )
 
@@ -88,32 +91,28 @@
            (eventbox :cursor "pointer"
                      (box :class "slider-container"
                           :orientation "v"
-                          :spacing 10
-                          :halign "center"
-                          :valign "center"
+                          :spacing 2
                           (box :class "volume-slider"
                                :orientation "h"
                                :space-evenly false
-                               :halign "center"
                                :spacing 5
-                               (label :halign "start" :text "󰕾")
+                               (label :text "󰕾")
                                (scale :class "volume"
                                       :value {current_volume}
                                       :min 0
                                       :max 101
                                       :onchange "wpctl set-volume @DEFAULT_AUDIO_SINK@ {}%"
                                       :active true
-                                      )               (box :width 60 :halign "end"
-                                      (label :text "${current_volume}%" :halign "end")
                                       )
+                               (box :width 60
+                                    (label :text "${current_volume}%")
+                                    )
                                )
                           (box :class "brightness-slider"
-                               :halign "end"
-                               :valign "center"
                                :orientation "h"
                                :space-evenly false
                                :spacing 5
-                               (label :halign "start" :text "󰃠")
+                               (label :text "󰃠")
                                (scale :class "brightness"
                                       :value {current_brightness}
                                       :min 0
@@ -121,8 +120,8 @@
                                       :onchange "brightnessctl set {}%"
                                       :active true
                                       )
-                               (box :width 60 :halign "end"
-                                    (label :text "${current_brightness}%" :halign "end")
+                               (box :width 60
+                                    (label :text "${current_brightness}%")
                                     )
                                )
                           )
@@ -131,15 +130,18 @@
 
 
 (defwidget nexus_main []
-           (box :class "nexus-container"
+           (box :valign "end"
+                :class "nexus-container"
                 :orientation "v"
                 :space-evenly false
+                :spacing 5
+                ;(decor)
                 (clock)
-                (slider)
+                (sysinfo)
                 (music_player)
+                (slider)
                 (applications)
                 (power_buttons)
-
                 )
            )
 
@@ -155,7 +157,7 @@
            (box :space-evenly false
                 :halign "end"
                 (revealer :transition "slideleft"
-                          :reveal is_nexus_open
+                          :reveal nexus_rev
                           :duration "350ms"
                           (nexus_main)
                           )
@@ -163,8 +165,10 @@
            )
 
 (defwidget nexus []
-           (eventbox :class "nexus" :cursor "pointer"
-                     :onclick "./scripts/nexus.sh"
+           (eventbox :class "nexus"
+                     :cursor "pointer"
+                     ;:onclick "${nexus_rev == false ? "${EWW_CMD} open nexus_win && ${EWW_CMD} update nexus_rev=true": "${EWW_CMD} update nexus_rev=false ; ${EWW_CMD} close nexus_win"}"
+                     :onclick "nexus/scripts/nexus.sh"
                      (label :text " ")
                      )
            )

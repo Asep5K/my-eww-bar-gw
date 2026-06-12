@@ -1,13 +1,17 @@
-.work label {
-    font-size: 15px;
-    color: $text;
-    margin: 2px 4px;
+.work {
+    label {
+        font-size: 15px;
+        //background-color: $text;
+        margin: 2px 4px;
+
+    }
+
 }
 
 .workspace-container {
-    background-color: $bg-menu;
+    background-color: $crust;
     border-radius: 12px;
-    border: 1px solid $accent;
+    border: 1px solid $lavender;
 }
 
 .workspace-img {

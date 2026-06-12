@@ -1,0 +1,73 @@
+(defwidget sysinfo []
+           (box :class "sysinfo"
+                :orientation "h"
+                :space-evenly false
+                :halign "center"
+                     (ram_box)
+                     (cpu_box)
+                     (disk_box)
+                )
+           )
+
+
+(defwidget foo_box [cclass value label1 label2 lclass]
+           (box :class "foo-box"
+                :orientation "v"
+                :space-evenly false
+                :spacing 7
+                (circular-progress :class cclass
+                                   :value value
+                                   :thickness 5
+                                   :start-at 75
+                                   :width 80
+                                   :height 80
+                                   (label :text label1 :xalign 0.5 :yalign 0.5)
+                                   )
+                (label :text label2 :class lclass)
+                )
+           )
+
+(defwidget ram_box []
+           (foo_box 
+             :cclass "ram-perc" 
+             :value "${EWW_RAM.used_mem_perc}" 
+             :label1 " " 
+             :label2 "RAM ${round(EWW_RAM.used_mem_perc,0)}%" 
+             :lclass "ram-usage"
+             )
+           )
+
+(defwidget cpu_box []
+           (foo_box
+             :cclass "cpu-perc"
+             :value "${EWW_CPU.avg}"
+             :label1 " "
+             :label2 "CPU ${round(EWW_CPU.avg,0)}%"
+             :lclass "cpu-avg"
+             )
+           )
+
+(defwidget disk_box []
+            (foo_box
+              :cclass "disk"
+              :value "${EWW_DISK["/"].used_perc}"
+              :label1 " "
+              :label2 "DISK ${round(EWW_DISK["/"].used_perc,0)}%"
+              :lclass "disk-perc"
+              )
+           )
+
+
+(defwindow sysinfo
+           :monitor 0
+           :namespace "sysinfo"
+           :stacking "bg"
+           :geometry (geometry :anchor "top center"
+                               :width "7%";"50%"
+                               :height "7%" ;"40%"
+                               :y "5px"
+                               )
+           (sysinfo)
+           )
+
+;; vim:ft=lisp

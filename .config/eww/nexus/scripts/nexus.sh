@@ -10,10 +10,10 @@ set_layer_rule() {
 }
 
 set_layer_rule "nexus-win" "slide"
-if [[ "$(eww get is_nexus_open)" == "true" ]]; then
-    eww update is_nexus_open=false
+if [[ "$(eww get nexus_rev)" == "true" ]]; then
+    eww update nexus_rev=false
     eww close nexus_win
 else
-    eww update is_nexus_open=true
+    eww update nexus_rev=true
     eww open nexus_win
 fi

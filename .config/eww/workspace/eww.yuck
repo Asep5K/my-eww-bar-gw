@@ -1,13 +1,15 @@
 (defvar img_path "../hypr/wallpaper/1.jpg")
 (defvar is_hover false)
-
+(defvar active_workspace 1)
 
 (defwidget workspace_button [num]
            (eventbox :cursor "pointer"
-                     :onscroll "./scripts/workspace.sh {}"
+                     :onscroll "sh -c 'if [ \"{}\" = \"up\" ]; then hyprctl dispatch \"hl.dsp.focus({ workspace = \\\"r-1\\\" })\"; else hyprctl dispatch \"hl.dsp.focus({ workspace = \\\"r+1\\\" })\"; fi'"
                      :onclick "hyprctl dispatch 'hl.dsp.focus({ workspace = ${num} })'"
-                     :onhover "eww update is_hover=true && ./scripts/hover.sh ${num}"
-                     :onhoverlost "eww update is_hover=false"
+                     :onrightclick "hyprctl dispatch 'hl.dsp.window.move({ workspace = ${num} })'"
+                     :onhover "workspace/scripts/hover.sh ${num} && ${EWW_CMD} update is_hover=true"
+                     :onhoverlost "${EWW_CMD} update is_hover=false"
+                     :timeout "500ms"
                      (box :class "work"
                           :spacing 5
                           :space-evenly false
@@ -18,12 +20,13 @@
 
 (defwidget workspaces []
            (box :class "workspace-container"
-                :spacing 5
+                :spacing 10
                 (workspace_button :num 1)
                 (workspace_button :num 2)
                 (workspace_button :num 3)
                 (workspace_button :num 4)
                 (workspace_button :num 5)
+                (workspace_button :num 6)
                 )
            )
 

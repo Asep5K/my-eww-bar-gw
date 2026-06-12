@@ -1,0 +1,32 @@
+.sysinfo {
+    border-radius: 10px;
+}
+
+.foo-box {
+    border-radius: 15px;
+    border: 2px solid $mauve;
+    padding: 10px;
+    margin-right: 5px;
+    background-color: rgba($crust, 0.5);
+
+    &:last-child {
+        margin-right: 0;
+    }
+
+
+    .disk,
+    .cpu-perc,
+    .ram-perc {
+        background-color: $text;
+        color: $mauve;
+
+        label {
+            font-size: 40px;
+            color: $text;
+
+        }
+
+
+    }
+
+}

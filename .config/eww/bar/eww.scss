@@ -1,0 +1,36 @@
+.bar {
+    border: 1px solid $mauve;
+    background-color: rgba($crust, 0.5);
+    padding: 0 15px;
+    border-radius: 12px;
+}
+
+.arch-btw {
+    label {
+        color: $blue;
+    }
+
+    &:hover label {
+        color: $red;
+    }
+}
+
+.temp,
+.ram {
+    font-weight: bold;
+
+    .tempr,
+    .ram-usage {
+        transition: 0.3s color;
+
+        &.adem-ayem,
+        &.normal {
+            color: $text;
+        }
+
+        &.panas-goblok,
+        &.high {
+            color: $red;
+        }
+    }
+}
